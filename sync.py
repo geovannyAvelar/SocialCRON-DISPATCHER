@@ -3,6 +3,7 @@
 
 from urllib2 import Request, urlopen
 from datetime import datetime
+import time
 import redis
 import json
 
@@ -12,7 +13,7 @@ redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 now = datetime.now().strftime("%Y-%m-%d")
 
-auth_request = Request(BASE_URL + "oauth/token?username=root@root.com&password=root&grant_type=password")
+auth_request = Request(BASE_URL + "oauth/token?username=geovanny.avelar@gmail.com&password=root&grant_type=password")
 auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
 auth_response = json.loads(urlopen(auth_request, data="").read())
 
@@ -27,7 +28,14 @@ posts_request.add_header("Authorization", "Bearer " + auth_response['access_toke
 posts_response = json.loads(urlopen(posts_request).read())
 
 for post in posts_response:
-  try:
-    redis.set(post['id'], json.dumps(posts_response))
-  except:
-    pass
+ date = datetime.strptime(post['date'], '%Y-%m-%dT%H:%M+0000')
+ now_timestamp = int(time.mktime(datetime.now().timetuple()))
+ timestamp = int(time.mktime(date.timetuple()))
+ diff = timestamp - now_timestamp
+
+ if diff > 60:
+   try:
+    redis.set('schedule:%s' %(post['id']), json.dumps(posts_response), diff)
+   except:
+     print 'Error on redis'
+   
