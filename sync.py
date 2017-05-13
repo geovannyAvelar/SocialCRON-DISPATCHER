@@ -15,7 +15,7 @@ redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 datetime_now = datetime.now()
 now = datetime_now.strftime("%Y-%m-%d")
 
-log.write('Sync executed at %s\n' %(datetime_now.strftime("%Y-%m-%dT%H:%M%S%z")))
+log.write('[DEBUG] - Sync executed at %s\n' %(datetime_now.strftime("%Y-%m-%dT%H:%M:%S%z")))
 
 auth_request = Request(BASE_URL + "oauth/token?username=geovanny.avelar@gmail.com&password=root&grant_type=password")
 auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
@@ -39,8 +39,9 @@ for post in posts_response:
 
  if diff > 60:
    try:
-    redis.set('schedule:%s' %(post['id']), json.dumps(posts_response), diff)
-    log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s\n" %(post['id'], post['date']))
+    if not redis.exists('schedule:%s' %(post['id'])):
+     redis.set('schedule:%s' %(post['id']), json.dumps(posts_response), diff)
+     log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s\n" %(post['id'], post['date']))
    except:
      log.write('[ERROR] - Error on redis\n')
 
