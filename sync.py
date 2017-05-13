@@ -9,13 +9,13 @@ import json
 
 BASE_URL = "http://api.socialcron.com.br:5756/"
 
-log = file('dispacther.log', 'a')
+log = file('dispatcher.log', 'a')
 redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 datetime_now = datetime.now()
 now = datetime_now.strftime("%Y-%m-%d")
 
-log.write('Sync executed at %s' %(datetime_now.strftime("%Y-%m-%dT%H:%M%s%z")))
+log.write('Sync executed at %s\n' %(datetime_now.strftime("%Y-%m-%dT%H:%M%s%z")))
 
 auth_request = Request(BASE_URL + "oauth/token?username=geovanny.avelar@gmail.com&password=root&grant_type=password")
 auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
@@ -40,10 +40,10 @@ for post in posts_response:
  if diff > 60:
    try:
     redis.set('schedule:%s' %(post['id']), json.dumps(posts_response), diff)
-    log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s" %(posts_response['id'], posts_response['date']))
+    log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s\n" %(posts_response['id'], posts_response['date']))
    except:
-     log.write('Error on redis')
+     log.write('[ERROR] - Error on redis\n')
 
 log.flush()
 log.close()
-   
+
