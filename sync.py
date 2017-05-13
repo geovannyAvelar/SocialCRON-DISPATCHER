@@ -15,7 +15,7 @@ redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 datetime_now = datetime.now()
 now = datetime_now.strftime("%Y-%m-%d")
 
-log.write('Sync executed at %s\n' %(datetime_now.strftime("%Y-%m-%dT%H:%M%s%z")))
+log.write('Sync executed at %s\n' %(datetime_now.strftime("%Y-%m-%dT%H:%M%S%z")))
 
 auth_request = Request(BASE_URL + "oauth/token?username=geovanny.avelar@gmail.com&password=root&grant_type=password")
 auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
