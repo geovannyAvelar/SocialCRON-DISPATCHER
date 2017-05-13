@@ -40,7 +40,7 @@ for post in posts_response:
  if diff > 60:
    try:
     redis.set('schedule:%s' %(post['id']), json.dumps(posts_response), diff)
-    log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s\n" %(posts_response['id'], posts_response['date']))
+    log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s\n" %(post['id'], post['date']))
    except:
      log.write('[ERROR] - Error on redis\n')
 
