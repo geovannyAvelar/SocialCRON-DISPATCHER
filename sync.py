@@ -17,7 +17,7 @@ now = datetime_now.strftime("%Y-%m-%d")
 
 log.write('[DEBUG] - Sync executed at %s\n' %(datetime_now.strftime("%Y-%m-%dT%H:%M:%S%z")))
 
-auth_request = Request(BASE_URL + "oauth/token?username=geovanny.avelar@gmail.com&password=root&grant_type=password")
+auth_request = Request(BASE_URL + "oauth/token?username=root@root.com&password=root&grant_type=password")
 auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
 auth_response = json.loads(urlopen(auth_request, data="").read())
 
