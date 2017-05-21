@@ -45,4 +45,5 @@ for key in schedules_keys:
     fb_post_data =  urllib.urlencode(fb_post_data)
     fb_post_response = json.loads(urlopen(fb_post_request, data = fb_post_data).read())
 
-  
+log.flush()
+log.close()
