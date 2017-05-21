@@ -14,7 +14,7 @@ log = file('dispatcher.log', 'a')
 redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 datetime_now = datetime.now().utcnow()
-one_minute_after = datetime_now - timedelta(minutes = 1)
+one_minute_after = datetime_now + timedelta(minutes = 1)
 
 log.write('[DEBUG] - Dispatch executed at %s\n' %(datetime_now.strftime("%Y-%m-%dT%H:%M:%S%z")))
 
@@ -25,6 +25,8 @@ for key in schedules_keys:
   schedule_date = datetime.strptime(schedule['date'][0:-5], "%Y-%m-%dT%H:%M")
 
   if schedule_date > datetime_now and schedule_date < one_minute_after:
+
+    print schedule
 
     photos_ids = []
 
@@ -43,6 +45,7 @@ for key in schedules_keys:
       fb_post_data["attached_media[%s]" %(index)] = id
 
     fb_post_data =  urllib.urlencode(fb_post_data)
+    print fb_post_data
     fb_post_response = json.loads(urlopen(fb_post_request, data = fb_post_data).read())
 
 log.flush()
