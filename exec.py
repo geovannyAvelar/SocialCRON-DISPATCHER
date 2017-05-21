@@ -26,8 +26,6 @@ for key in schedules_keys:
 
   if schedule_date > datetime_now and schedule_date < one_minute_after:
 
-    print schedule
-
     photos_ids = []
 
     if 'photos' in  schedule['post']:
