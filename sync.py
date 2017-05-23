@@ -40,16 +40,17 @@ for post in posts_response:
 
  if diff > 60:
    try:
-    photos_request = Request(BASE_URL + "v2/photos/post/" + str(post['post']['id']))
-    photos_request.add_header("Authorization", "Bearer " + auth_response['access_token'])
-    photos_response = json.loads(urlopen(photos_request).read())
-    post['post']['photos'] = []
+    if not redis.exists('schedule:' + post['id']):
+      photos_request = Request(BASE_URL + "v2/photos/post/" + str(post['post']['id']))
+      photos_request.add_header("Authorization", "Bearer " + auth_response['access_token'])
+      photos_response = json.loads(urlopen(photos_request).read())
+      post['post']['photos'] = []
 
-    for photos in photos_response:
-      post['post']['photos'].append(photos)
+      for photos in photos_response:
+        post['post']['photos'].append(photos)
 
-    redis.set('schedule:%s' %(post['id']), json.dumps(post), diff + 120)
-    log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s\n" %(post['id'], post['date']))
+      redis.set('schedule:%s' %(post['id']), json.dumps(post), diff + 120)
+      log.write("[DEBUG] - Schedule id %s stored. Will be posted at %s\n" %(post['id'], post['date']))
    except:
      log.write('[ERROR] - Error on redis\n')
 
