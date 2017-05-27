@@ -14,16 +14,19 @@ redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 log = file('dispatcher.log', 'a')
 
 def check_auth(username, password):
-  url = "oauth/token?username=%s&password=%s&grant_type=password" %(username, password)
-  auth_request = Request(BASE_URL + url)
-  auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
-  auth_response = json.loads(urlopen(auth_request, data="").read())
-
-  if auth_response['expires_in'] <= 120:
-    refresh_request = Request(BASE_URL + "oauth/token?grant_type=refresh_token&refresh_token=" + auth_response['refresh_token'])
-    refresh_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
-    refresh_request = json.loads(urlopen(refresh_request, data="").read())
-    auth_response = refresh_request
+  try:
+    url = "oauth/token?username=%s&password=%s&grant_type=password" %(username, password)
+    auth_request = Request(BASE_URL + url)
+    auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
+    auth_response = json.loads(urlopen(auth_request, data="").read())
+    
+    if auth_response['expires_in'] <= 120:
+      refresh_request = Request(BASE_URL + "oauth/token?grant_type=refresh_token&refresh_token=" + auth_response['refresh_token'])
+      refresh_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
+      refresh_request = json.loads(urlopen(refresh_request, data="").read())
+      auth_response = refresh_request
+  except:
+    return False
   
   return 'access_token' in auth_response
 
@@ -42,6 +45,16 @@ def requires_auth(f):
             return authenticate()
         return f(*args, **kwargs)
     return decorated
+
+@app.route("/info", methods = ['GET'])
+@requires_auth
+def getInfo():
+  log_lines = ''
+  for line in file('dispatcher.log', 'r').readlines():
+    log_lines = log_lines + line
+   
+  info = { 'synced_schedules': len(redis.keys("*")), 'log': log_lines}
+  return Response(json.dumps(info), mimetype='application/json')
 
 
 @app.route("/sync", methods = ['POST'])
