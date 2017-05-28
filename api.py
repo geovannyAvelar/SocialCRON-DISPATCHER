@@ -1,0 +1,1 @@
+BASE_URL = "http://api.socialcron.com.br:5756/"

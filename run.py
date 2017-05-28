@@ -1,13 +1,13 @@
+from api import BASE_URL
 from flask import Flask, request, Response
 from functools import wraps
 from urllib2 import Request, urlopen
 from datetime import datetime, timedelta
+import auth
 import time
 import json
 import os
 import redis
-
-BASE_URL = "http://api.socialcron.com.br:5756/"
 
 app = Flask(__name__)
 redis = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -15,16 +15,7 @@ log = file('dispatcher.log', 'a')
 
 def check_auth(username, password):
   try:
-    url = "oauth/token?username=%s&password=%s&grant_type=password" %(username, password)
-    auth_request = Request(BASE_URL + url)
-    auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
-    auth_response = json.loads(urlopen(auth_request, data="").read())
-    
-    if auth_response['expires_in'] <= 120:
-      refresh_request = Request(BASE_URL + "oauth/token?grant_type=refresh_token&refresh_token=" + auth_response['refresh_token'])
-      refresh_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
-      refresh_request = json.loads(urlopen(refresh_request, data="").read())
-      auth_response = refresh_request
+    auth_response = auth.authenticate(username, password)
   except:
     return False
   
@@ -62,15 +53,7 @@ def getInfo():
 def sync():
   post = request.json
 
-  auth_request = Request(BASE_URL + "oauth/token?username=root@root.com&password=root&grant_type=password")
-  auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
-  auth_response = json.loads(urlopen(auth_request, data="").read())
-
-  if auth_response['expires_in'] <= 120:
-    refresh_request = Request(BASE_URL + "oauth/token?grant_type=refresh_token&refresh_token=" + auth_response['refresh_token'])
-    refresh_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
-    refresh_request = json.loads(urlopen(refresh_request, data="").read())
-    auth_response = refresh_request
+  auth_response = auth.authenticate('root@root.com', 'root')
 
   date = datetime.strptime(post['date'], '%Y-%m-%dT%H:%M+0000')
   now_timestamp = int(time.mktime(datetime.now().timetuple()))
