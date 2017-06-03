@@ -13,6 +13,6 @@ def find_photos_by_post(id=-1,token=''):
         photos_request.add_header("Authorization", "Bearer " + token)
         photos_response = urlopen(photos_request).read()
         return json.loads(photos_response)
-    except HTTPError:
-        log.error('Cannot retrieve photos on post saving')
+    except HTTPError as error:
+        log.error("Cannot retrieve photos on post saving. %s %s" %(error.code, error.reason))
         return []
