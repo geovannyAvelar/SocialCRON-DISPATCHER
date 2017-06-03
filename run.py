@@ -11,6 +11,7 @@ def sync():
     schedule = request.json
     auth_response = auth.authenticate('root', 'root')
     schedules_repository.save(schedule)
+    log.info("Forced sync")
     return "OK"
 
 if __name__ == "__main__":

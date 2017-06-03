@@ -6,6 +6,8 @@ import log
 import json
 
 def find_photos_by_post(id=-1,token=''):
+    log.info("Searching photos of post %s with token %s" %(str(id), token) )
+
     try:
         photos_request = Request(BASE_URL + "v2/photos/post/" + str(id))
         photos_request.add_header("Authorization", "Bearer " + token)
