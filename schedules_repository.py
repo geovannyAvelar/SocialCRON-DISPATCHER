@@ -12,7 +12,7 @@ redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 api_auth = auth.authenticate('root', 'root')
 
 def save(schedule):
-    date = datetime.strptime(schedule['date'], '%Y-%m-%dT%H:%M+0000')
+    date = datetime.strptime(schedule['date'], '%Y-%m-%dT%H:%M:%s+0000')
     now_timestamp = int(time.mktime(datetime.now().timetuple()))
     timestamp = int(time.mktime(date.timetuple()))
     diff = timestamp - now_timestamp
@@ -33,7 +33,7 @@ def find_all():
 
     for key in schedules_keys:
         schedule = json.loads(redis.get(key))
-        schedule['date'] = datetime.strptime(schedule['date'][0:-5], "%Y-%m-%dT%H:%M")
+        schedule['date'] = datetime.strptime(schedule['date'][0:-5] + ":30", "%Y-%m-%dT%H:%M:%S")
         schedules.append(schedule)
 
     return schedules
