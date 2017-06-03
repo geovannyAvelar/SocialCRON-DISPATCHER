@@ -15,3 +15,4 @@ def find_photos_by_post(id=-1,token=''):
         return json.loads(photos_response)
     except HTTPError:
         log.error('Cannot retrieve photos on post saving')
+        return []
