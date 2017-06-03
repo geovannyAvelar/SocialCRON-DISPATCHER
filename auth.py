@@ -6,7 +6,8 @@ import json
 from api import BASE_URL
 
 def authenticate(username='', password=''):
-    auth_request = Request(BASE_URL + "oauth/token?username=root@root.com&password=root&grant_type=password")
+    url = BASE_URL + "oauth/token?username=%s&password=%s&grant_type=password" %(username, password)
+    auth_request = Request(url)
     auth_request.add_header("Authorization", "Basic c29jaWFsY3Jvbjpzb2NpYWxjcm9u")
     auth_response = json.loads(urlopen(auth_request, data="").read())
 
