@@ -2,6 +2,7 @@
 
 from api import BASE_URL
 from urllib2 import Request, urlopen
+import log
 import urllib
 import json
 
@@ -27,6 +28,8 @@ def savePhotos(photos=[], token=''):
         fb_photo_request = Request("https://graph.facebook.com/v2.4/me/photos")
         fb_photo_response = json.loads(urlopen(fb_photo_request, data = fb_photo_data).read())
         media_id = "{\"media_fbid\":\"%s\"}" %(fb_photo_response['id'])
+        log.info("Photo %s saved on Facebook" %(fb_photo_response['id']))
         photos_ids.append(media_id)
-
+    
     return photos_ids
+
