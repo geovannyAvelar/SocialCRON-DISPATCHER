@@ -33,7 +33,8 @@ def find_all():
 
     for key in schedules_keys:
         schedule = json.loads(redis.get(key))
-        schedule['date'] = datetime.strptime(schedule['date'][0:-5] + ":30", "%Y-%m-%dT%H:%M:%S")
+        schedule['date'] = datetime.strptime(schedule['date'][0:-5], "%Y-%m-%dT%H:%M:%S")
+        schedule['date'] = schedule['date'].replace(second=30)
         schedules.append(schedule)
 
     return schedules
