@@ -26,4 +26,3 @@ for schedule in schedules:
         content = schedule['post']['content']
         thread = Thread(target=facebook.sendPost, args=(content, photos_ids, token))
         thread.start()
-        log.info("Schedule %s sent to Facebook API" %(schedule['id']))
