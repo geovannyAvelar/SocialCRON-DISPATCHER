@@ -15,10 +15,10 @@ log.info('Dispatch executed')
 schedules = schedules_repository.find_all()
 
 for schedule in schedules:
-    schedule_date = datetime.strptime(schedule['date'][0:-5], "%Y-%m-%dT%H:%M")
+    log.info("Selecting schedule %s" %(schedule['id']))
     token = schedule['profile']['token']
 
-    if schedule_date > datetime_now and schedule_date < one_minute_after:
+    if schedule['date'] > datetime_now and schedule['date'] < one_minute_after:
 
         if 'photos' in  schedule['post']:
             photos_ids = facebook.savePhotos(schedule['post']['photos'], token)
