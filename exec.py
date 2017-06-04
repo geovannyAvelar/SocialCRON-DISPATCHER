@@ -25,5 +25,5 @@ for schedule in schedules:
             photos_ids = facebook.savePhotos(schedule['post']['photos'], token)
 
         content = schedule['post']['content']
-        thread = Thread(target=facebook.sendPost, args=(content, photos_ids, token))
+        thread = Thread(target=facebook.sendPost, args=(schedule['id'], content, photos_ids, token))
         thread.start()

@@ -3,10 +3,11 @@
 from api import BASE_URL
 from urllib2 import Request, urlopen, HTTPError
 import log
+import schedules
 import urllib
 import json
 
-def sendPost(content='', photos=[], token=''):
+def sendPost(post_id='', content='', photos=[], token=''):
     photos_ids = savePhotos(photos, token)
 
     try:
@@ -18,8 +19,12 @@ def sendPost(content='', photos=[], token=''):
 
         fb_post_data =  urllib.urlencode(fb_post_data)
         fb_post_response = json.loads(urlopen(fb_post_request, data = fb_post_data).read())
-        log.info('Facebook response %s' %(fb_post_response))
-        return fb_post_response
+
+        if 'id' in fb_post_response:
+            schedules.mark_as_posted(post_id, token)
+            log.info('Facebook response %s' %(fb_post_response))
+            return fb_post_response
+
     except HTTPError as error:
         log.error("Cannot perform post on Facebook, %s %s" %(error.code, error.reason))    
 
@@ -38,4 +43,3 @@ def savePhotos(photos=[], token=''):
             log.error("Cannot post photo on Facebook, %s %s" %(error.code, error.reason))
 
     return photos_ids
-
