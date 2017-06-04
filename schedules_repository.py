@@ -12,7 +12,8 @@ redis = redis.StrictRedis(host='localhost', port=6379, db=0)
 api_auth = auth.authenticate('root', 'root')
 
 def save(schedule):
-    date = datetime.strptime(schedule['date'], '%Y-%m-%dT%H:%M:%s+0000')
+    date = datetime.strptime(schedule['date'], '%Y-%m-%dT%H:%M+0000')
+    date = date.replace(second=1, microsecond=0)
     now_timestamp = int(time.mktime(datetime.now().timetuple()))
     timestamp = int(time.mktime(date.timetuple()))
     diff = timestamp - now_timestamp
