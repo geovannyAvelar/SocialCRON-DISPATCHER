@@ -9,9 +9,7 @@ import urllib
 import json
 
 def sendPost(post_id='', content='', photos=[], token=''):
-    # Authentication with SocialCRON API, to send confirmations of posting and retrieve photos
-    api_token = auth.authenticate('root', 'root')['access_token']
-    photos_ids = savePhotos(photos, api_token)
+    photos_ids = savePhotos(photos, token)
 
     try:
         fb_post_data =  {'message': content, 'access_token': token}
@@ -24,6 +22,8 @@ def sendPost(post_id='', content='', photos=[], token=''):
         fb_post_response = json.loads(urlopen(fb_post_request, data = fb_post_data).read())
 
         if 'id' in fb_post_response:
+            # Authentication with SocialCRON API, to send confirmation of posting
+            api_token = auth.authenticate('root', 'root')['access_token']
             schedules.mark_as_posted(post_id, api_token)
             log.info('Facebook response %s' %(fb_post_response))
             return fb_post_response

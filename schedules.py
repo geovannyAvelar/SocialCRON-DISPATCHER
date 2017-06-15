@@ -20,6 +20,7 @@ def mark_as_posted(id=-1, token=''):
     try:
         request = Request(BASE_URL + 'v2/schedules/' + str(id))
         request.add_header("Authorization", "Bearer " + token)
+        request.get_method = lambda: 'PUT'
         response = urlopen(request).read()
         return json.loads(response)
     except HTTPError as error:
