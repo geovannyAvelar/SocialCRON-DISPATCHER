@@ -1,4 +1,4 @@
-# SocialCRON-DISPATCHER
+# SocialCRON-DISPATCHER [DEPRECATED SINCE 4th July 2017]
 Python scripts to execute posts via Facebook API on SocialCRON platform. SocialCRON is an open-source platform to schedule posts on social media sites.
 
 ## Summary
